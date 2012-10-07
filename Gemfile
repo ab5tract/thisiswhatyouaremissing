@@ -2,4 +2,4 @@ source 'http://rubygems.org'
 
 gem 'sinatra'
 gem 'shotgun'
-gem 'youtube-it'
+gem 'youtube_it'
