@@ -17,12 +17,23 @@
     $.getJSON('/fetch<%= @country ? "?country=#{@country}" : ""%>', function (data) {
       $.each(data, function (idx, video) {
         if (vacancies.length > 0) {
-          $('#' + vacancies.splice(Math.floor(Math.random()*vacancies.length),1)).html(video);
+          var idx = vacancies.splice(Math.floor(Math.random()*vacancies.length),1);
+          $('.slot-empty.' + idx).html(video);
+          $('.slot-cover.' + idx).addClass('covered');
         }
       });
       if (vacancies.length > 0) { fetch(); }
     });
   };
 
+  var poll = function () {
+    setInterval(function () {
+      $('.covered').fadeTo(1000, 0, function () {
+        this.css('z-index', '-1')
+      });
+    }, 1000);
+  };
+
   fetch();
+  poll();
 </script>

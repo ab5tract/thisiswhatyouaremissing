@@ -1,6 +1,10 @@
 <% 4.times do |i| %>
   <% 4.times do |j| %>
-    <div id="<%= 4*i + j %>" class="slot slot-empty" style="
+    <div class="slot slot-empty <%= 4*i + j %>" style="
+      top:  <%= i*340 %>px;
+      left: <%= j*560 %>px;
+    "></div>
+    <div class="slot slot-cover <%= 4*i + j %>" style="
       top:  <%= i*340 %>px;
       left: <%= j*560 %>px;
     "></div>
