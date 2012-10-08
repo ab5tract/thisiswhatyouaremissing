@@ -16,15 +16,24 @@ helpers do
     )
   end
 
-  def fields_param(atts)
-    atts.empty? ? {} : { :fields => { :entry => atts.join(',') } }
+  def projecting?
+    false
   end
 
-  def query(atts)
-    {}.merge(fields_param(atts))
+  def fields_param
+    projecting? ? { :fields => { :entry => fields_attributes[:server].join(',') } } : {}
   end
 
-  def attribute_mapping
+  def query_params(params = {})
+    {
+      :safe_search => 'none',
+      :restriction => 'AF',
+      :per_page    => 50,
+      :page        => 1,
+    }.merge(params).merge(fields_param)
+  end
+
+  def fields_attribute_mapping
     {
       :title        => 'title',
       :published_at => 'published',
@@ -34,7 +43,7 @@ helpers do
     }
   end
 
-  def generate_attributes(att_map)
+  def generate_fields_attributes(att_map)
     client_atts = []
     server_atts = []
 
@@ -49,51 +58,65 @@ helpers do
     }
   end
 
-  def project_feed(atts = [])
-    client.videos_by(query(atts)).videos
+  def get_feed(params)
+    client.videos_by(query_params(params)).videos
   end
 
   def video_to_hash(atts, video)
-    atts.reduce({}) { |hash, att| hash[att] = video.send(att); hash }
+    atts.reduce({}) do |hash, att|
+      val = video.send(att)
+
+      puts "state val: #{val}, #{val.class}" if att == :state
+
+      hash[att] = val
+      hash
+    end
+  end
+
+  def fields_attributes
+    @fields_attributes ||= generate_fields_attributes(fields_attribute_mapping)
   end
 end
 
-before do
-  @attributes = generate_attributes(attribute_mapping)
+get '/video' do
+  video = get_feed({ :per_page => 1, :query => 'innocence of muslims' })[0]
+
+  video.public_methods(false).each { |meth| puts "#{meth}: #{video.send(meth)}" }
 end
 
-get '/videos/:projected' do
-  if params[:projected] == 'true'
-    videos = project_feed(@attributes[:server])
-  else
-    videos = project_feed()
-  end
-  
-  videos = videos.map { |video| video_to_hash(@attributes[:client], video) }
-
+get '/videos' do
   idx = Dir.entries('./results').map { |name| (name.match(/(\d+)/) || [0])[0].to_i }.sort.last + 1
 
-  f = File.new("./results/results#{idx}", 'w+')
+  videos = get_feed({ :query => 'innocence of muslims', :page => 1 }).map { |video| video_to_hash(fields_attributes[:client], video) }
 
-  videos.each { |video| video.each { |k,v| f.write "#{k}: #{v}\n" } }
-  f.close
+  file = File.new("./results/results#{idx}", 'w+')
+  videos.each { |video| video.each { |k,v| file.write "#{k}: #{v}\n" } }
+  file.close
 end
 
 get '/experiment' do
   total = 0
+  count = 0
+  video = nil
 
   loop do
-    videos = project_feed
+    count += 1
+    videos = get_feed({ :query => 'innocence of muslims', :page => count })
     total += videos.size
+    video  = videos.find { |v| v.state && v.state[:reason_code] && v.state[:reason_code].include?('requesterRegion') }
 
-    video = videos.find { |v| v.state.include? 'requesterRegion' }
+    puts "total: #{total}"
 
-    break if total >= 1000 !video.nil?
+    break if total >= 999 || video
   end
 
-  puts "total: #{total}"
+  puts "total: #{total}, count: #{count}"
 
-  f = File.new("./results/hits", 'a+')
-  video_to_hash(@attributes[:client], video).each { |k,v| f.write "#{k}: #{v}\n" }
-  f.close
+  if video
+    video.public_methods(false).each { |meth| puts "#{meth}: #{video.send(meth)}" }
+
+    f = File.new("./results/hits", 'a+')
+    video_to_hash(fields_attributes[:client], video).each { |k,v| f.write "#{k}: #{v}\n" }
+    f.close
+  end
 end
