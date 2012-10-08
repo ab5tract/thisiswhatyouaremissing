@@ -1,9 +1,14 @@
 require 'sinatra'
 require 'youtube_it'
+require './youtube_it_fix'
+require 'active_support/core_ext/date/calculations'
+require 'json'
 
 configure :development do
   require './devenv'
 end
+
+enable :sessions
 
 helpers do
   def client
@@ -16,7 +21,7 @@ helpers do
   end
 
   def projecting?
-    true
+    false
   end
 
   def fields_param
@@ -25,10 +30,9 @@ helpers do
 
   def query_params(params = {})
     {
-      :safe_search => 'none',
-      :restriction => 'AF',
-      :per_page    => 50,
-      :page        => 1,
+      :per_page => 50,
+      :page     => 1,
+      # :fields   => { :published => ((Date.today - 30)..(Date.today)) }
     }.merge(params).merge(fields_param)
   end
 
@@ -38,7 +42,8 @@ helpers do
       :published_at => 'published',
       :view_count   => 'yt:statistics(@viewCount)',
       :state        => 'app:control(yt:state)',
-      :player_url   => 'media:group(media:player(@url))'
+      :player_url   => 'media:group(media:player(@url))',
+      :restriction  => 'media:group(media:restriction)'
     }
   end
 
@@ -57,65 +62,85 @@ helpers do
     }
   end
 
-  def get_feed(params)
-    client.videos_by(query_params(params)).videos
+  def get_feed(type, params)
+    if type
+      client.videos_by(type, query_params(params)).videos
+    else
+      client.videos_by(query_params(params)).videos
+    end
   end
 
   def video_to_hash(atts, video)
-    atts.reduce({}) do |hash, att|
-      val = video.send(att)
-
-      puts "state val: #{val}, #{val.class}" if att == :state
-
-      hash[att] = val
-      hash
-    end
+    atts.reduce({}) { |hash, att| hash[att] = video.send(att); hash }
   end
 
   def fields_attributes
     @fields_attributes ||= generate_fields_attributes(fields_attribute_mapping)
   end
-end
 
-get '/video' do
-  video = get_feed({ :per_page => 1, :query => 'innocence of muslims' })[0]
-
-  video.public_methods(false).each { |meth| puts "#{meth}: #{video.send(meth)}" }
-end
-
-get '/videos' do
-  idx = Dir.entries('./results').map { |name| (name.match(/(\d+)/) || [0])[0].to_i }.sort.last + 1
-
-  videos = get_feed({ :query => 'innocence of muslims', :page => 1 }).map { |video| video_to_hash(fields_attributes[:client], video) }
-
-  file = File.new("./results/results#{idx}", 'w+')
-  videos.each { |video| video.each { |k,v| file.write "#{k}: #{v}\n" } }
-  file.close
-end
-
-get '/experiment' do
-  total = 0
-  count = 0
-  video = nil
-
-  loop do
-    count += 1
-    videos = get_feed({ :query => 'innocence of muslims', :page => count })
-    total += videos.size
-    video  = videos.find { |v| v.state && v.state[:reason_code] && v.state[:reason_code].include?('requesterRegion') }
-
-    puts "total: #{total}"
-
-    break if total >= 999 || video
+  def feed_types
+    [
+      nil,
+      :top_rated,
+      :top_favorites,
+      :most_discussed,
+      :most_responded
+    ]
   end
 
-  puts "total: #{total}, count: #{count}"
-
-  if video
-    video.public_methods(false).each { |meth| puts "#{meth}: #{video.send(meth)}" }
-
-    f = File.new("./results/hits", 'a+')
-    video_to_hash(fields_attributes[:client], video).each { |k,v| f.write "#{k}: #{v}\n" }
-    f.close
+  def time_spans
+    [
+      'all_time',
+      'this_month',
+      'this_week',
+      'today'
+    ]
   end
+end
+
+get '/reset' do
+  session[:page]      = 0
+  session[:feed_type] = 0
+  session[:time_span] = 0
+
+  'OK'
+end
+
+get '/fetch' do
+  @hits = []
+
+  session[:page]      ||= 0
+  session[:feed_type] ||= 0
+  session[:time_span] ||= 0
+
+  session[:page] += 1
+
+  videos = get_feed(feed_types[session[:feed_type]], :page => session[:page], :time => time_spans[session[:time_span]])
+
+  @hits += videos.select { |v| v.restriction && v.restriction.include?(params[:country] || 'CN') }
+
+  puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}"
+  
+  if session[:page] >= 20
+    session[:feed_type] += 1
+    session[:page] = 0
+
+    if session[:feed_type] >= feed_types.size
+      session[:feed_type] = 0
+      session[:time_span] += 1
+      
+
+      if session[:time_span] >= time_spans.size
+        session[:page]      = 0
+        session[:feed_type] = 0
+        session[:time_span] = 0
+      end
+    end
+  end
+
+  @hits.map { |video| @video = video; erb :player, :layout => false }.to_json
+end
+
+get '/' do
+  erb :index
 end
