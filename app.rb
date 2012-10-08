@@ -32,7 +32,6 @@ helpers do
     {
       :per_page => 50,
       :page     => 1,
-      # :fields   => { :published => ((Date.today - 30)..(Date.today)) }
     }.merge(params).merge(fields_param)
   end
 
@@ -138,7 +137,7 @@ get '/fetch' do
     end
   end
 
-  @hits.map { |video| @video = video; erb :player, :layout => false }.to_json
+  JSON.dump @hits.map { |video| @video = video; erb :player, :layout => false }
 end
 
 get '/' do
