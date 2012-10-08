@@ -14,7 +14,7 @@
   for (i = 0; i < 16; i++) { vacancies.push(i); }
 
   var fetch = function () {
-    $.getJSON("/fetch?country=<%= @country %>", function (data) {
+    $.getJSON('/fetch<%= @country ? "?country=#{@country}" : ""%>', function (data) {
       $.each(data, function (idx, video) {
         if (vacancies.length > 0) {
           $('#' + vacancies.splice(Math.floor(Math.random()*vacancies.length),1)).html(video);
