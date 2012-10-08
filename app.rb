@@ -141,5 +141,6 @@ get '/fetch' do
 end
 
 get '/' do
+  @country = params[:country]
   erb :index
 end
