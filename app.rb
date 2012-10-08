@@ -1,6 +1,5 @@
 require 'sinatra'
 require 'youtube_it'
-require './youtube_it_fix'
 
 configure :development do
   require './devenv'
@@ -17,7 +16,7 @@ helpers do
   end
 
   def projecting?
-    false
+    true
   end
 
   def fields_param
