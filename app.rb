@@ -11,13 +11,19 @@ end
 enable :sessions
 
 helpers do
+  def development?
+    ENV['RACK_ENV'] == :development
+  end
+
   def client
-    @client ||= YouTubeIt::Client.new(
+    args = {
       :username => ENV['YOUTUBE_USERNAME'],
       :password => ENV['YOUTUBE_PASSWORD'],
-      :dev_key  => ENV['YOUTUBE_DEV_KEY'],
-      :debug    => true
-    )
+      :dev_key  => ENV['YOUTUBE_DEV_KEY']
+    }
+    args.merge(:debug => true) if development?
+
+    @client ||= YouTubeIt::Client.new(args)
   end
 
   def projecting?
@@ -118,7 +124,7 @@ get '/fetch' do
 
   @hits += videos.select { |v| v.restriction && v.restriction.include?(params[:country] || 'CN') }
 
-  puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}"
+  puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}" if development?
   
   if session[:page] >= 20
     session[:feed_type] += 1
