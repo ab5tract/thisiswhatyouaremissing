@@ -121,9 +121,17 @@ get '/fetch' do
 
   session[:page] += 1
 
-  videos = get_feed(feed_types[session[:feed_type]], :page => session[:page], :time => time_spans[session[:time_span]])
-
-  @hits += videos.select { |v| v.restriction && v.restriction.include?(params[:country] || session[:country_code] || 'CN') }
+  @hits += get_feed(
+    feed_types[session[:feed_type]],
+    :page => session[:page],
+    :time => time_spans[session[:time_span]]
+  ).select do |v|
+    v.restriction && v.restriction.include?(
+      params[:country]       ||
+      session[:country_code] ||
+      'CN'
+    )
+  end
 
   puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}" if development?
   
@@ -152,20 +160,4 @@ get '/' do
   session[:country_code] ||= request.location.country_code
   puts session[:country_code] if development?
   erb :index
-end
-
-get '/wtf' do
-  [
-    :latitude,
-    :longitude,
-    :coordinates,
-    :address,
-    :city,
-    :state,
-    :state_code,
-    :postal_code,
-    :country,
-    :country_code
-  ].each { |att| puts "#{att}: #{request.location.send(att)}" }
-  puts request.location.country_code
 end
