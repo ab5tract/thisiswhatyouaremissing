@@ -3,6 +3,7 @@ require 'youtube_it'
 require './youtube_it_fix'
 require 'active_support/core_ext/date/calculations'
 require 'json'
+require 'geocoder'
 
 configure :development do
   require './devenv'
@@ -12,7 +13,7 @@ enable :sessions
 
 helpers do
   def development?
-    ENV['RACK_ENV'] == :development
+    ENV['RACK_ENV'] == 'development'
   end
 
   def client
@@ -149,5 +150,22 @@ end
 get '/' do
   @country = params[:country]
   session[:country_code] ||= request.location.country_code
+  puts session[:country_code] if development?
   erb :index
+end
+
+get '/wtf' do
+  [
+    :latitude,
+    :longitude,
+    :coordinates,
+    :address,
+    :city,
+    :state,
+    :state_code,
+    :postal_code,
+    :country,
+    :country_code
+  ].each { |att| puts "#{att}: #{request.location.send(att)}" }
+  puts request.location.country_code
 end
