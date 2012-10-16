@@ -10,6 +10,7 @@ configure :development do
 end
 
 enable :sessions
+# set :session_secret, "here be dragons"
 
 helpers do
   def development?
@@ -115,11 +116,15 @@ end
 get '/fetch' do
   @hits = []
 
+  puts "before session[:page]: #{session[:page]}"
+
   session[:page]      ||= 0
   session[:feed_type] ||= 0
   session[:time_span] ||= 0
 
   session[:page] += 1
+
+  puts "after session[:page]: #{session[:page]}"
 
   @hits += get_feed(
     feed_types[session[:feed_type]],
@@ -133,6 +138,7 @@ get '/fetch' do
     )
   end
 
+  puts "session: #{session}"
   puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}" if development?
   
   if session[:page] >= 20
@@ -160,4 +166,10 @@ get '/' do
   session[:country_code] ||= request.location.country_code
   puts session[:country_code] if development?
   erb :index
+end
+
+get '/test' do
+  session[:test] ||= 0
+  session[:test] += 1
+  puts "session[:test]: #{session[:test]}"
 end
