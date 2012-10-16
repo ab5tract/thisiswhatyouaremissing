@@ -23,7 +23,7 @@ helpers do
       :password => ENV['YOUTUBE_PASSWORD'],
       :dev_key  => ENV['YOUTUBE_DEV_KEY']
     }
-    args.merge(:debug => true) if development?
+    args.merge(:debug => true)# if development?
 
     @client ||= YouTubeIt::Client.new(args)
   end
@@ -106,9 +106,7 @@ helpers do
 end
 
 get '/reset' do
-  session.each { |k,v| session.delete k }
-
-  'OK'
+  session.each { |k,v| session.delete k }; 'OK'
 end
 
 get '/fetch' do
