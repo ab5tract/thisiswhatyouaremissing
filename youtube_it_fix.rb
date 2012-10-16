@@ -39,9 +39,7 @@ class YouTubeIt
       end
     end
   end
-end
 
-class YouTubeIt
   module Parser
     class VideoFeedParser < FeedParser
       protected
@@ -222,13 +220,14 @@ class YouTubeIt
       end
     end
   end
-end
 
-
-class YouTubeIt
   module Model
     class Video < YouTubeIt::Record
       attr_reader :restriction
+
+      def restricted_in?(country_code)
+        restiction && restiction.include?(country_code)
+      end
     end
   end
 end

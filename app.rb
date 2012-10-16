@@ -57,8 +57,8 @@ end
 get '/fetch' do
   session[:page] = (session[:page] && session[:page] < 20) ? session[:page] + 1 : 1
 
-  @hits = get_feed(:page => session[:page]).select do |v|
-    v.restriction && v.restriction.include?(
+  @hits = get_feed(:page => session[:page]).select do |video|
+    video.restricted_in?(
       params[:country]       ||
       session[:country_code] ||
       'CN'
