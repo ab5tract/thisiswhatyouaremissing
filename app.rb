@@ -10,7 +10,13 @@ configure :development do
 end
 
 enable :sessions
-# set :session_secret, "here be dragons"
+
+before do
+  if development?
+    logger.level     = Logger::DEBUG
+    YouTubeIt.logger = logger
+  end
+end
 
 helpers do
   def development?
@@ -18,14 +24,12 @@ helpers do
   end
 
   def client
-    args = {
+    @client ||= YouTubeIt::Client.new({
       :username => ENV['YOUTUBE_USERNAME'],
       :password => ENV['YOUTUBE_PASSWORD'],
-      :dev_key  => ENV['YOUTUBE_DEV_KEY']
-    }
-    args.merge(:debug => true)# if development?
-
-    @client ||= YouTubeIt::Client.new(args)
+      :dev_key  => ENV['YOUTUBE_DEV_KEY'],
+      :debug    => development?
+    })
   end
 
   def projecting?
@@ -38,8 +42,10 @@ helpers do
 
   def query_params(params = {})
     {
+      :feed     => nil,
       :per_page => 50,
       :page     => 1,
+      :time     => 'all_time'
     }.merge(params).merge(fields_param)
   end
 
@@ -69,9 +75,9 @@ helpers do
     }
   end
 
-  def get_feed(type, params)
-    if type
-      client.videos_by(type, query_params(params)).videos
+  def get_feed(params = {})
+    if feed = params.delete(:feed)
+      client.videos_by(feed, query_params(params)).videos
     else
       client.videos_by(query_params(params)).videos
     end
@@ -112,18 +118,14 @@ end
 get '/fetch' do
   @hits = []
 
-  puts "before session[:page]: #{session[:page]}"
-
   session[:page]      ||= 0
   session[:feed_type] ||= 0
   session[:time_span] ||= 0
 
   session[:page] += 1
 
-  puts "after session[:page]: #{session[:page]}"
-
   @hits += get_feed(
-    feed_types[session[:feed_type]],
+    :feed => feed_types[session[:feed_type]],
     :page => session[:page],
     :time => time_spans[session[:time_span]]
   ).select do |v|
@@ -134,7 +136,6 @@ get '/fetch' do
     )
   end
 
-  puts "session: #{session}"
   puts "hits: #{@hits.size}, time_span: #{time_spans[session[:time_span]]}, feed_type: #{feed_types[session[:feed_type]]}, page: #{session[:page]}" if development?
   
   if session[:page] >= 20
@@ -165,7 +166,8 @@ get '/' do
 end
 
 get '/test' do
-  session[:test] ||= 0
-  session[:test] += 1
-  puts "session[:test]: #{session[:test]}"
+  get_feed(:feed => :most_popular).each do |video|
+    puts video_to_hash(fields_attributes[:client], video)
+  end
+  'hi'
 end
