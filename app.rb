@@ -55,7 +55,9 @@ get '/reset' do
 end
 
 get '/fetch' do
+  puts "session[:page] before: #{session[:page]}"
   session[:page] = (session[:page] && session[:page] < 20) ? session[:page] + 1 : 1
+  puts "session[:page] after: #{session[:page]}"
 
   @hits = get_feed(:page => session[:page]).select do |v|
     v.restriction && v.restriction.include?(
