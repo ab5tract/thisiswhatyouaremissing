@@ -38,7 +38,7 @@ helpers do
       :per_page => 50,
       :page     => 1,
       :time     => 'all_time'
-    }.merge(params).merge(fields_param)
+    }.merge(params)
   end
 
   def get_feed(params = {})
