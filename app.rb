@@ -106,9 +106,7 @@ helpers do
 end
 
 get '/reset' do
-  session[:page]      = 0
-  session[:feed_type] = 0
-  session[:time_span] = 0
+  session.each { |k,v| session.delete k }
 
   'OK'
 end
