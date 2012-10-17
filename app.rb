@@ -32,11 +32,12 @@ helpers do
 end
 
 get '/fetch' do
-  JSON.dump client.videos_by({
+  query = {
     :per_page => 50,
     :page     => params[:page],
     :time     => 'all_time'
-  }).videos.map { |v| @video = v; erb :player, :layout => false if v.restricted_in?(params[:country]) }.compact
+  }
+  JSON.dump client.videos_by(query).videos.map { |v| @video = v; erb :player, :layout => false if v.restricted_in? params[:country] }.compact
 end
 
 get '/' do
