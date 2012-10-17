@@ -9,8 +9,6 @@ configure :development do
   require './devenv'
 end
 
-enable :sessions
-
 before do
   if development?
     logger.level     = Logger::DEBUG
@@ -48,10 +46,6 @@ helpers do
       client.videos_by(query_params(params)).videos
     end
   end
-end
-
-get '/reset' do
-  session.each { |k,v| session.delete k }; 'OK'
 end
 
 get '/fetch' do

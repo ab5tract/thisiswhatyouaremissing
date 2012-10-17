@@ -226,7 +226,7 @@ class YouTubeIt
       attr_reader :restriction
 
       def restricted_in?(country_code)
-        restiction && restiction.include?(country_code)
+        restriction && restriction.include?(country_code)
       end
     end
   end
