@@ -30,26 +30,33 @@ helpers do
     })
   end
 
-  def query_params(params = {})
+  def default_params
     {
-      :feed     => :most_popular,
       :per_page => 50,
       :page     => 1,
+      :feed     => :most_popular,
       :time     => 'all_time'
-    }.merge(params)
+    }
   end
 
   def get_feed(params = {})
+    params = default_params.merge params 
+
     if feed = params.delete(:feed)
-      client.videos_by(feed, query_params(params)).videos
+      client.videos_by(feed, params).videos
     else
-      client.videos_by(query_params(params)).videos
+      client.videos_by(params).videos
     end
+  end
+
+  
+  def get_non_standard_feed(params = {})
+    get_feed(params.merge :feed => nil)
   end
 end
 
 get '/fetch' do
-  @hits = get_feed(:page => params[:page]).select { |v| v.restricted_in? params[:country] }
+  @hits = get_non_standard_feed(:page => params[:page]).select { |v| v.restricted_in? params[:country] }
 
   logger.debug "hits: #{@hits.size}, page: #{params[:page]}, country: #{params[:country]}"
 

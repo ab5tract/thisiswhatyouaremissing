@@ -1,8 +1,13 @@
-body, .slot {
+body {
 	background-color: black;
+}
+#container {
+	width: 1680px;
+	height: 1360px;
+	margin: 0 auto;
 }
 .slot {
 	height: 340px;
 	width: 560px;
-	position: absolute;
+	float: left;
 }

@@ -1,8 +1,7 @@
-<% 4.times do |i| %>
-  <% 3.times do |j| %>
-    <div id="<%= 3*i + j %>" class="slot" style="
-      top:  <%= i*340 %>px;
-      left: <%= j*560 %>px;
-    "></div>
+<div id="container">
+  <% 4.times do |i| %>
+    <% 3.times do |j| %>
+      <div id="<%= 3*i + j %>" class="slot"></div>
+    <% end %>
   <% end %>
-<% end %>
+</div>
