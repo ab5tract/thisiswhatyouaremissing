@@ -1,5 +1,7 @@
-.slot {
+body, .slot {
 	background-color: black;
+}
+.slot {
 	height: 340px;
 	width: 560px;
 	position: absolute;
