@@ -11,16 +11,38 @@
 
 <script>
   var vacancies = [];
-  for (i = 0; i < 16; i++) { vacancies.push(i); }
+  for (var i = 0; i < 16; i+=1) { vacancies.push(i); }
+
+  var getPage = function () {
+    return sessionStorage.getItem('page') || 1;
+  };
+
+  var incrementPage = function () {
+    sessionStorage.setItem('page', parseInt(getPage()) + 1);
+  };
+
+  var requestData = {
+    <% if @country %>
+      'country' : <%= @country %>
+    <% end %>
+  };
 
   var fetch = function () {
-    $.getJSON('/fetch<%= @country ? "?country=#{@country}" : "" %>', function (data) {
-      $.each(data, function (idx, video) {
+    requestData['page'] = getPage();
+
+    $.getJSON('/fetch', requestData, function (responseData) {
+      $.each(responseData, function (idx, video) {
         if (vacancies.length > 0) {
-          $('#' + vacancies.splice(Math.floor(Math.random()*vacancies.length),1)).html(video);
+          var slotId = vacancies.splice(Math.floor(Math.random()*vacancies.length),1);
+
+          $('#' + slotId).html(video);
         }
       });
-      if (vacancies.length > 0) { fetch(); }
+
+      if (vacancies.length > 0) {
+        incrementPage();
+        fetch();
+      }
     });
   };
 

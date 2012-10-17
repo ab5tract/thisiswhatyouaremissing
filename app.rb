@@ -55,9 +55,7 @@ get '/reset' do
 end
 
 get '/fetch' do
-  session[:page] = (session[:page] && session[:page] < 20) ? session[:page] + 1 : 1
-
-  @hits = get_feed(:page => session[:page]).select do |video|
+  @hits = get_feed(:page => params[:page]).select do |video|
     video.restricted_in?(
       params[:country]       ||
       session[:country_code] ||
@@ -65,7 +63,7 @@ get '/fetch' do
     )
   end
 
-  puts "hits: #{@hits.size}, page: #{session[:page]}" if development?
+  puts "hits: #{@hits.size}, page: #{params[:page]}" if development?
 
   JSON.dump @hits.map { |video| @video = video; erb :player, :layout => false }
 end
