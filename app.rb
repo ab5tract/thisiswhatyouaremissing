@@ -55,22 +55,18 @@ get '/reset' do
 end
 
 get '/fetch' do
-  @hits = get_feed(:page => params[:page]).select do |video|
-    video.restricted_in?(
-      params[:country]       ||
-      session[:country_code] ||
-      'CN'
-    )
-  end
+  @hits = get_feed(:page => params[:page]).select { |v| v.restricted_in? params[:country] }
 
-  puts "hits: #{@hits.size}, page: #{params[:page]}" if development?
+  logger.debug "hits: #{@hits.size}, page: #{params[:page]}"
 
   JSON.dump @hits.map { |video| @video = video; erb :player, :layout => false }
 end
 
 get '/' do
-  @country = params[:country]
-  session[:country_code] ||= request.location.country_code
-  puts session[:country_code] if development?
+  @country_override = params[:country]
+  @country_default  = request.location.country_code
+
+  logger.debug "country: #{@country_default}"
+
   erb :index
 end

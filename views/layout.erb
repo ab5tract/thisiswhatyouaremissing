@@ -10,7 +10,8 @@
 </html>
 
 <script>
-  var vacancies = [];
+  var requestData = {};
+  var vacancies   = [];
   for (var i = 0; i < 16; i+=1) { vacancies.push(i); }
 
   var getPage = function () {
@@ -21,14 +22,11 @@
     sessionStorage.setItem('page', parseInt(getPage()) + 1);
   };
 
-  var requestData = {
-    <% if @country %>
-      'country' : <%= @country %>
-    <% end %>
-  };
-
   var fetch = function () {
-    requestData['page'] = getPage();
+    requestData = {
+      'page'    : getPage(),
+      'country' : <%= @country_override || @country_default %>
+    };
 
     $.getJSON('/fetch', requestData, function (responseData) {
       $.each(responseData, function (idx, video) {
