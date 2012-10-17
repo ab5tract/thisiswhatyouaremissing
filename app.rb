@@ -32,7 +32,7 @@ helpers do
 
   def query_params(params = {})
     {
-      :feed     => nil,
+      :feed     => :most_popular,
       :per_page => 50,
       :page     => 1,
       :time     => 'all_time'
