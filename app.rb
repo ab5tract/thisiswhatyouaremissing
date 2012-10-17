@@ -51,7 +51,7 @@ end
 get '/fetch' do
   @hits = get_feed(:page => params[:page]).select { |v| v.restricted_in? params[:country] }
 
-  logger.debug "hits: #{@hits.size}, page: #{params[:page]}"
+  logger.debug "hits: #{@hits.size}, page: #{params[:page]}, country: #{params[:country]}"
 
   JSON.dump @hits.map { |video| @video = video; erb :player, :layout => false }
 end
@@ -59,8 +59,6 @@ end
 get '/' do
   @country_override = params[:country]
   @country_default  = request.location.country_code
-
-  logger.debug "country: #{@country_default}"
 
   erb :index
 end

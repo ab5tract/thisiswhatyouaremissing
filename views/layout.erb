@@ -12,14 +12,16 @@
 <script>
   var requestData = {};
   var vacancies   = [];
-  for (var i = 0; i < 16; i+=1) { vacancies.push(i); }
+  for (var i = 0; i < 12; i+=1) { vacancies.push(i); }
 
   var getPage = function () {
     return sessionStorage.getItem('page') || 1;
   };
 
   var incrementPage = function () {
-    sessionStorage.setItem('page', parseInt(getPage()) + 1);
+    var page = parseInt(getPage()) + 1; /*But*/ if (page >= 21) { page = 1; }
+
+    sessionStorage.setItem('page', page);
   };
 
   var fetch = function () {
