@@ -29,38 +29,14 @@ helpers do
       :debug    => development?
     })
   end
-
-  def default_params
-    {
-      :per_page => 50,
-      :page     => 1,
-      :feed     => :most_popular,
-      :time     => 'all_time'
-    }
-  end
-
-  def get_feed(params = {})
-    params = default_params.merge params 
-
-    if feed = params.delete(:feed)
-      client.videos_by(feed, params).videos
-    else
-      client.videos_by(params).videos
-    end
-  end
-
-  
-  def get_non_standard_feed(params = {})
-    get_feed(params.merge :feed => nil)
-  end
 end
 
 get '/fetch' do
-  @hits = get_non_standard_feed(:page => params[:page]).select { |v| v.restricted_in? params[:country] }
-
-  logger.debug "hits: #{@hits.size}, page: #{params[:page]}, country: #{params[:country]}"
-
-  JSON.dump @hits.map { |video| @video = video; erb :player, :layout => false }
+  JSON.dump client.videos_by({
+    :per_page => 50,
+    :page     => params[:page],
+    :time     => 'all_time'
+  }).videos.map { |v| @video = v; erb :player, :layout => false if v.restricted_in?(params[:country]) }.compact
 end
 
 get '/' do
