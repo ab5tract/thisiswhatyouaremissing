@@ -25,7 +25,7 @@
   var fetch = function () {
     requestData = {
       'page'    : getPage(),
-      'country' : <%= @country_override || @country_default %>
+      'country' : '<%= @country_override || @country_default %>'
     };
 
     $.getJSON('/fetch', requestData, function (responseData) {
