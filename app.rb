@@ -1,7 +1,7 @@
 require 'sinatra'
+require 'sinatra/contrib'
 require 'youtube_it'
 require './patches/patches'
-require 'active_support/core_ext/date/calculations'
 require 'json'
 require 'geocoder'
 require 'facets/enumerable/compact_map'
@@ -11,10 +11,8 @@ configure :development do
 end
 
 before do
-  if development?
-    logger.level     = Logger::DEBUG
-    YouTubeIt.logger = logger
-  end
+  logger.level     = Logger::DEBUG if development?
+  YouTubeIt.logger = logger
 end
 
 helpers do
@@ -22,29 +20,31 @@ helpers do
     ENV['RACK_ENV'] == 'development'
   end
 
+  def search_words
+    [
+      'testing',
+      'playground',
+      'whatever'
+    ]
+  end
+
   def client
     @client ||= YouTubeIt::Client.new({
       :username => ENV['YOUTUBE_USERNAME'],
       :password => ENV['YOUTUBE_PASSWORD'],
       :dev_key  => ENV['YOUTUBE_DEV_KEY'],
-      :debug    => development?
+      :debug    => true
     })
   end
 end
 
 get '/fetch' do
-  query = {
-    :per_page => 50,
-    :page     => params[:page],
-    :time     => 'all_time'
-  }
-
-  players = client.videos_by(query).videos.compact_map do |video|
+  players = client.videos_by(params).videos.compact_map do |video|
     @video = video
     erb :player, :layout => false if video.restricted_in? params[:country]
   end
 
-  logger.debug "page: #{params[:page]}, hits: #{players.size}, country: #{params[:country]}"
+  logger.debug "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
 
   JSON.dump players
 end
@@ -52,6 +52,7 @@ end
 get '/' do
   @country_override = params[:country]
   @country_default  = request.location.country_code
+  @search_words     = JSON.dump search_words
 
   erb :index
 end

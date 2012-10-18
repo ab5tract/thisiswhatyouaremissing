@@ -10,39 +10,69 @@
 </html>
 
 <script>
-  var requestData = {};
-  var vacancies   = [];
-  for (var i = 0; i < 12; i+=1) { vacancies.push(i); }
-
-  var getPage = function () {
-    return sessionStorage.getItem('page') || 1;
+  // HELPERS
+  var popRandom = function (array) {
+    return array.splice(Math.floor(Math.random()*array.length),1);
   };
 
+  // PAGING
+  var page = parseInt(sessionStorage.getItem('page') || 1);
+
   var incrementPage = function () {
-    var page = parseInt(getPage()) + 1; /*But*/ if (page >= 21) { page = 1; }
+    page = page + 1;
+    /*but*/ if (page >= 21) { page = 1; }
 
     sessionStorage.setItem('page', page);
   };
 
+  // SEARCH WORDS
+  var searchWords = <%= yield_content :script %>;
+  var unusedWords = sessionStorage.getItem('unusedWords');
+
+  var repopulateUnusedWords = function() {
+    unusedWords = []; for (var i = 0; i < searchWords.length; i+=1) { unusedWords.push(i); }
+  };
+
+  if (unusedWords) {
+    unusedWords = $.map(unusedWords.split(','), function (el, idx) { return parseInt(el); });
+  }
+  else {
+    repopulateUnusedWords();
+  }
+
+  var getSearchWord = function () {
+    var word = searchWords[popRandom(unusedWords)];
+
+    if (unusedWords.length == 0) {
+      incrementPage();
+      /*and*/ repopulateUnusedWords();
+    }
+
+    sessionStorage.setItem('unusedWords', unusedWords);
+
+    return word;
+  };
+
+  // RESULTS
+  var requestData = {};
+
+  var vacancies = [];
+  for (var i = 0; i < 16; i+=1) { vacancies.push(i); }
+
   var fetch = function () {
-    requestData = {
-      'page'    : getPage(),
-      'country' : '<%= @country_override || @country_default %>'
-    };
+    requestData['page']    = page;
+    requestData['query']   = getSearchWord();
+    requestData['country'] = '<%= @country_override || @country_default %>';
 
     $.getJSON('/fetch', requestData, function (responseData) {
       $.each(responseData, function (idx, video) {
         if (vacancies.length > 0) {
-          var slotId = vacancies.splice(Math.floor(Math.random()*vacancies.length),1);
+          var slotId = popRandom(vacancies);
 
           $('#' + slotId).html(video);
         }
       });
-
-      if (vacancies.length > 0) {
-        incrementPage();
-        fetch();
-      }
+      if (vacancies.length > 0) { fetch(); }
     });
   };
 

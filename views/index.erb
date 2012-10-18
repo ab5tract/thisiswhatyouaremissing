@@ -1,7 +1,9 @@
 <div id="container">
   <% 4.times do |i| %>
-    <% 3.times do |j| %>
-      <div id="<%= 3*i + j %>" class="slot"></div>
+    <% 4.times do |j| %>
+      <div id="<%= 4*i + j %>" class="slot"></div>
     <% end %>
   <% end %>
 </div>
+
+<% content_for :script do %><%= @search_words %><% end %>
