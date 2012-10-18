@@ -1,9 +1,10 @@
 require 'sinatra'
 require 'youtube_it'
-require './youtube_it_fix'
+require './patches/patches'
 require 'active_support/core_ext/date/calculations'
 require 'json'
 require 'geocoder'
+require 'facets/enumerable/compact_map'
 
 configure :development do
   require './devenv'
@@ -37,7 +38,15 @@ get '/fetch' do
     :page     => params[:page],
     :time     => 'all_time'
   }
-  JSON.dump client.videos_by(query).videos.map { |v| @video = v; erb :player, :layout => false if v.restricted_in? params[:country] }.compact
+
+  players = client.videos_by(query).videos.compact_map do |video|
+    @video = video
+    erb :player, :layout => false if video.restricted_in? params[:country]
+  end
+
+  logger.debug "page: #{params[:page]}, hits: #{players.size}, country: #{params[:country]}"
+
+  JSON.dump players
 end
 
 get '/' do
