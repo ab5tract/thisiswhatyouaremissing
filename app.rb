@@ -5,6 +5,7 @@ require './patches/patches'
 require 'json'
 require 'geocoder'
 require 'facets/enumerable/compact_map'
+require 'nokogiri'
 
 configure :development do
   require './devenv'
@@ -55,4 +56,12 @@ get '/' do
   @search_words     = JSON.dump search_words
 
   erb :index
+end
+
+get '/test' do
+  doc = Nokogiri::XML File.open('data/countrycodes.xml')
+  doc.xpath('//ISO_3166-1_Entry').each do |child|
+    puts child.at('.//ISO_3166-1_Country_name').text
+  end
+  200
 end

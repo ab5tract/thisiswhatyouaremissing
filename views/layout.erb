@@ -1,19 +1,32 @@
 <html>
 <head>
   <title>thisiswhatyouaremissing.</title>
-  <link rel="stylesheet" type="text/css" href="/styles.css" />
-  <script type="text/javascript" src="/jquery-1.7.1.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+  <link rel="stylesheet" type="text/css" href="/css/chosen.css" />
 </head>
 <body>
   <%= yield %>
+
   <div id="background-container">
-    <div id="header"></div>
-    <div id="footer"></div>
+    <div id="footer">
+      <button id="main-button" class="btn btn-large btn-danger">thisiswhatyouaremissing.</button>
+      <div id="select-container">
+        <%= erb :select %>
+      </div>
+    </div>
   </div>
 </body>
 </html>
 
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/chosen.jquery.min.js"></script>
 <script>
+  $('.chzn-select').chosen({
+    allow_single_deselect: true,
+    no_results_text: "no results matched."
+  });
+
   // HELPERS
   var popRandom = function (array) {
     return array.splice(Math.floor(Math.random()*array.length),1);
@@ -49,7 +62,7 @@
 
     if (unusedWords.length == 0) {
       incrementPage();
-      /*and*/ repopulateUnusedWords();
+      repopulateUnusedWords();
     }
 
     sessionStorage.setItem('unusedWords', unusedWords);
@@ -80,5 +93,5 @@
     });
   };
 
-  // fetch();
+  fetch();
 </script>
