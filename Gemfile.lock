@@ -64,6 +64,7 @@ DEPENDENCIES
   geocoder
   i18n
   json
+  nokogiri
   shotgun
   sinatra
   sinatra-contrib
