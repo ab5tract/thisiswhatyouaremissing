@@ -1,11 +1,15 @@
 <html>
 <head>
-  <title>thisiswhatyouaremissing</title>
+  <title>thisiswhatyouaremissing.</title>
   <link rel="stylesheet" type="text/css" href="/styles.css" />
   <script type="text/javascript" src="/jquery-1.7.1.min.js"></script>
 </head>
 <body>
   <%= yield %>
+  <div id="background-container">
+    <div id="header"></div>
+    <div id="footer"></div>
+  </div>
 </body>
 </html>
 
@@ -76,5 +80,5 @@
     });
   };
 
-  fetch();
+  // fetch();
 </script>
