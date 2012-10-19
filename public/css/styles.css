@@ -1,0 +1,37 @@
+body, #background-container {
+  background-color: black;
+}
+#container {
+  position: absolute;
+  width: 2240px;
+  height: 1360px;
+  margin: 0 auto;
+}
+#background-container {
+  height: 1721px;
+}
+.slot {
+  height: 340px;
+  width: 560px;
+  float: left;
+}
+#main-button {
+  padding: 10px 27px;
+  font-size: 22px;
+  float: left;
+}
+#select-container {
+  float: left;
+  clear: both;
+}
+.chzn-select {
+  width: 300px;
+}
+#header, #footer {
+  height: 86px;
+}
+#footer {
+  position: relative;
+  top: 1376px;
+  height: 100%;
+}
