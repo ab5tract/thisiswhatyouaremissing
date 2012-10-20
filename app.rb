@@ -48,7 +48,7 @@ get '/fetch' do
 end
 
 get '/' do
-  @country      = request.location.country_code
+  @country      = request.location && request.location.country_code
   @search_words = JSON.dump search_words
 
   erb :index
