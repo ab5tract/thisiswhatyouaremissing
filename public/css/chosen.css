@@ -64,57 +64,6 @@ ul.credits li { margin-bottom: .25em; }
 
 strong { font-weight: bold; }
 
-/* Tweak navbar brand link to be super sleek
--------------------------------------------------- */
-.oss-bar {
-  top: 0;
-  right: 20px;
-  position: fixed;
-  z-index: 1030;
-}
-.oss-bar ul {
-  float: right;
-  margin: 0;
-  list-style: none;
-}
-.oss-bar ul li {
-  list-style: none;
-  float: left;
-  line-height: 0;
-  margin: 0;
-}
-.oss-bar ul li a {
-   -moz-box-sizing:    border-box;
-  -webkit-box-sizing: border-box;
-  -ms-box-sizing:     border-box;
-   box-sizing:        border-box;
-  border: 0;
-  margin-top: -10px;
-  display: block;
-  height: 58px;  
-  background: #F36C00 url(oss-credit.png) no-repeat 20px 22px;
-  padding: 22px 20px 12px 20px;
-  text-indent: 120%; /* stupid padding */
-  white-space: nowrap;
-  overflow: hidden;
-  -webkit-transition: all 0.10s ease-in-out;
-  -moz-transition: all 0.10s ease-in-out;
-  transition: all 0.15s ease-in-out;
-}
-.oss-bar ul li a:hover {
-  margin-top: 0px;
-}
-.oss-bar a.harvest {
-  width: 196px;
-  background-color: #F36C00;
-  background-position: -142px 22px;
-  padding-right: 22px; /* optical illusion */
-}
-.oss-bar a.fork {
-  width: 162px;
-  background-color: #333333;
-}
-
 /* @group Base */
 .chzn-container {
   font-size: 13px;

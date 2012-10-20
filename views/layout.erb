@@ -45,8 +45,12 @@
   });
 
   // HELPERS
+  var randomIdx = function (int) {
+    return Math.floor(Math.random()*int);
+  };
+
   var popRandom = function (array) {
-    return array.splice(Math.floor(Math.random()*array.length),1);
+    return array.splice(randomIdx(array.length),1);
   };
 
   var initVacancies = function () {
@@ -63,42 +67,12 @@
     return country == "" ? null : country;
   };
 
-  // PAGING
-  var page = parseInt(localStorage.getItem('page') || 1);
-
-  var incrementPage = function () {
-    page = page + 1;
-    /*but*/ if (page >= 21) { page = 1; }
-
-    localStorage.setItem('page', page);
-  };
-
   // SEARCH WORDS
   var searchWords = <%= yield_content :script %>;
-  var unusedWords = sessionStorage.getItem('unusedWords');
+  var wordsLength = searchWords.length;
 
-  var repopulateUnusedWords = function() {
-    unusedWords = []; for (var i = 0; i < searchWords.length; i+=1) { unusedWords.push(i); }
-  };
-
-  if (unusedWords) {
-    unusedWords = $.map(unusedWords.split(','), function (el, idx) { return parseInt(el); });
-  }
-  else {
-    repopulateUnusedWords();
-  }
-
-  var getSearchWord = function () {
-    var word = searchWords[popRandom(unusedWords)];
-
-    if (unusedWords.length == 0) {
-      incrementPage();
-      repopulateUnusedWords();
-    }
-
-    sessionStorage.setItem('unusedWords', unusedWords);
-
-    return word;
+  var getRandomSearchWord = function () {
+    return searchWords[randomIdx(wordsLength)];
   };
 
   // RESULTS
@@ -112,8 +86,8 @@
   var vacancies   = initVacancies();
 
   var fetch = function () {
-    requestData['page']    = page;
-    requestData['query']   = getSearchWord();
+    requestData['page']    = randomIdx(20) + 1;
+    requestData['query']   = getRandomSearchWord();
     requestData['country'] = getCountry() || "<%= @country %>";
 
     $.getJSON('/fetch', requestData, function (responseData) {

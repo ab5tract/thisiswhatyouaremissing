@@ -23,11 +23,7 @@ helpers do
   end
 
   def search_words
-    [
-      'testing',
-      'playground',
-      'whatever'
-    ]
+    File.open('./data/searchwords.txt') { |f| f.readlines.each { |l| l.chomp! } }
   end
 
   def client
