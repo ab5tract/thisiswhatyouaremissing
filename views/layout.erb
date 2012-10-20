@@ -1,31 +1,26 @@
 <html>
 <head>
   <title>thisiswhatyouaremissing.</title>
-  <link rel="stylesheet" type="text/css" href="/css/styles.css" />
   <link rel="stylesheet" type="text/css" href="/css/chosen.css" />
+  <link rel="stylesheet" type="text/css" href="/css/styles.css" />
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
 </head>
 <body>
   <%= yield %>
 
-  <div id="background-container">
-    <div id="header">
-      <div id="controls-container">
-        <div id="controls-sub-container">
-
-          <div id="select-container">
-            <%= erb :select %>
-          </div>
-
-          <button id="main-button" class="btn btn-small btn-info">Cross Borders</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="footer">
-      <div id="nav-container">
+  <div id="footer">
+    <div id="footer-content">
+      <div id="nav">
         <a href="/about" target="_blank">About</a>
         <a href="/visa" target="_blank">Get A Visa</a>
+      </div>
+      
+      <div id="controls">
+        <div id="select-container">
+          <%= erb :select %>
+        </div>
+
+        <button id="main-button" class="btn btn-small btn-info">Cross Borders</button>
       </div>
     </div>
   </div>
@@ -47,25 +42,6 @@
   $('#main-button').click(function () {
     sessionStorage.setItem('country', $('select').val());
     restartFetch();
-  });
-
-  $('.chzn-container').click(function () {
-    var containerTop, footerTop, backgroundHeight;
-
-    if (!$('.chzn-single').hasClass('chzn-single-with-drop')) {
-      containerTop     = '100px';
-      footerTop        = '1360px';
-      backgroundHeight = '1560px';
-    }
-    else {
-      containerTop     = '350px';
-      footerTop        = '1610px';
-      backgroundHeight = '1810px';
-    }
-
-    $('#container').css('top', containerTop);
-    $('#footer').css('top', footerTop);
-    $('#background-container').css('height', backgroundHeight);
   });
 
   // HELPERS
@@ -148,14 +124,7 @@
           $('#' + slotId).html(video);
         }
       });
-
-      if (vacancies.length > 0) {
-        fetch();
-      }
-      else {
-        $('#main-button').removeClass('disabled');
-        $('#main-button').addClass('enabled');
-      }
+      if (vacancies.length > 0) { fetch(); }
     });
   };
 

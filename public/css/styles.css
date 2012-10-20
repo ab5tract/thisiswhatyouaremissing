@@ -1,45 +1,50 @@
-body, #background-container {
-  background-color: black;
-  height: 1560px;
-}
-#header, #footer {
+#footer {
   height: 100px;
   width: 100%;
-  display: table;
+  position: relative;
+  top: 1385px;
 }
-#container {
+#footer-content {
+  width: 680px;
+  margin: auto;
+}
+#background-video-container, #video-container {
   position: absolute;
   width: 2240px;
-  height: 1360px;
   margin: 0 auto;
-  top: 100px;
+}
+#video-container {
+  height: 1360px;
+}
+#background-video-container {
+  background-color: black;
+  height: 1700px;
 }
 .slot {
   height: 340px;
   width: 560px;
   float: left;
 }
-#controls-container, #nav-container {
-  display: table-cell;
-  vertical-align: middle;
+#nav {
+  float: left;
+  line-height: 31px;
 }
-#controls-sub-container {
+#controls {
   float: right;
-  margin-right: 35px;
 }
 #select-container {
   float: left;
   margin: 3px;
+  text-align: left;
 }
 .chzn-select {
   width: 300px;
 }
-#footer {
-  position: relative;
-  top: 1360px;
-  text-align: center;
+#nav a {
+  color: gray;
+  text-decoration: underline;
+  margin: 0px 20px;
 }
-#nav-container a {
+#nav a:hover {
   color: white;
-  margin: 0px 10px;
-}
+};
