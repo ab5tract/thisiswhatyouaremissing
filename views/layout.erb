@@ -49,6 +49,25 @@
     restartFetch();
   });
 
+  $('.chzn-container').click(function () {
+    var containerTop, footerTop, backgroundHeight;
+
+    if (!$('.chzn-single').hasClass('chzn-single-with-drop')) {
+      containerTop     = '100px';
+      footerTop        = '1360px';
+      backgroundHeight = '1560px';
+    }
+    else {
+      containerTop     = '350px';
+      footerTop        = '1610px';
+      backgroundHeight = '1810px';
+    }
+
+    $('#container').css('top', containerTop);
+    $('#footer').css('top', footerTop);
+    $('#background-container').css('height', backgroundHeight);
+  });
+
   // HELPERS
   var popRandom = function (array) {
     return array.splice(Math.floor(Math.random()*array.length),1);
