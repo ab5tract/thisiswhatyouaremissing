@@ -57,3 +57,11 @@ get '/' do
 
   erb :index
 end
+
+get '/about' do
+  erb :about, :layout => false
+end
+
+get '/visa' do
+  erb :visa, :layout => false
+end

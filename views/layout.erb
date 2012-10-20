@@ -1,17 +1,32 @@
 <html>
 <head>
   <title>thisiswhatyouaremissing.</title>
-  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="/css/styles.css" />
   <link rel="stylesheet" type="text/css" href="/css/chosen.css" />
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
 </head>
 <body>
   <%= yield %>
 
-  <div id="footer">
-    <button id="main-button" class="btn btn-large btn-danger disabled">thisiswhatyouaremissing.</button>
-    <div id="select-container">
-      <%= erb :select %>
+  <div id="background-container">
+    <div id="header">
+      <div id="controls-container">
+        <div id="controls-sub-container">
+
+          <div id="select-container">
+            <%= erb :select %>
+          </div>
+
+          <button id="main-button" class="btn btn-small btn-info">Cross Borders</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer">
+      <div id="nav-container">
+        <a href="/about" target="_blank">About</a>
+        <a href="/visa" target="_blank">Get A Visa</a>
+      </div>
     </div>
   </div>
 </body>
@@ -23,34 +38,15 @@
   // jQuery
   $('.chzn-select').chosen({
     allow_single_deselect: true,
-    no_results_text:       "no results matched."
+    no_results_text:       "No results matched"
   });
 
-  $('.chzn-results > li').click(function () {
-    $('.search-choice-close').mouseup(function () {
-      window.location.hash = "_";
-    });
-    window.location.hash = "country=" + $(':selected').val();
-  });
+  $('select').val(sessionStorage.getItem('country'));
+  $('.chzn-select').trigger('liszt:updated');
 
-  $('#main-button').click(function (event) {
-    $this = $(this);
-
-    if ($this.hasClass('enabled')) {
-      $('#main-button').addClass('disabled');
-      $('#main-button').removeClass('enabled');
-      
-      $('.slot').html('');
-      vacancies = initVacancies();
-      fetch();
-
-      return false;
-    }
-    if ($this.hasClass('disabled')) {
-      event.preventDefault();
-
-      return false;
-    }
+  $('#main-button').click(function () {
+    sessionStorage.setItem('country', $('select').val());
+    restartFetch();
   });
 
   // HELPERS
@@ -67,10 +63,9 @@
 
   // COUNTRY
   var getCountry = function () {
-    var hashArr = window.location.hash.split('=');
-    var hashIdx = hashArr.indexOf('#country');
+    var country = sessionStorage.getItem('country');
 
-    return hashIdx == -1 ? null : hashArr[hashIdx + 1];
+    return country == "" ? null : country;
   };
 
   // PAGING
@@ -112,9 +107,14 @@
   };
 
   // RESULTS
-  var requestData = {};
+  var restartFetch = function () {
+    $('.slot').html('');
+    vacancies = initVacancies();
+    fetch();
+  };
 
-  var vacancies = initVacancies();
+  var requestData = {};
+  var vacancies   = initVacancies();
 
   var fetch = function () {
     requestData['page']    = page;

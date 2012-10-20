@@ -1,33 +1,45 @@
 body, #background-container {
   background-color: black;
+  height: 1560px;
+}
+#header, #footer {
+  height: 100px;
+  width: 100%;
+  display: table;
 }
 #container {
   position: absolute;
   width: 2240px;
   height: 1360px;
   margin: 0 auto;
-}
-#background-container {
-  height: 1721px;
+  top: 100px;
 }
 .slot {
   height: 340px;
   width: 560px;
   float: left;
 }
-#main-button {
-  padding: 10px 27px;
-  font-size: 22px;
-  float: left;
+#controls-container, #nav-container {
+  display: table-cell;
+  vertical-align: middle;
+}
+#controls-sub-container {
+  float: right;
+  margin-right: 35px;
 }
 #select-container {
   float: left;
-  clear: both;
+  margin: 3px;
 }
 .chzn-select {
   width: 300px;
 }
 #footer {
   position: relative;
-  top: 1376px;
+  top: 1360px;
+  text-align: center;
+}
+#nav-container a {
+  color: white;
+  margin: 0px 10px;
 }
