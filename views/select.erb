@@ -1,8 +1,8 @@
-<select class="chzn-select" data-placeholder="cross boundaries.">
+<select id="country-select" class="chzn-select" data-placeholder="cross boundaries.">
   <option value=""></option>
   <% Nokogiri::XML(File.open('./data/countrycodes.xml')).xpath('//ISO_3166-1_Entry').map do |country| %>
   	<option value="<%= country.at('.//ISO_3166-1_Alpha-2_Code_element').text %>">
-	  	<%= country.at('.//ISO_3166-1_Country_name').text.downcase + "." %>
+	  	<%= country.at('.//ISO_3166-1_Country_name').text.downcase.titlecase %>
 	  </option>
   <% end %>
 </select>

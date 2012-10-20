@@ -27,11 +27,7 @@ body, #background-container {
 .chzn-select {
   width: 300px;
 }
-#header, #footer {
-  height: 86px;
-}
 #footer {
   position: relative;
   top: 1376px;
-  height: 100%;
 }
