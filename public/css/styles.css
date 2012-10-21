@@ -1,6 +1,16 @@
 hr {
   margin: 15px 0;
 }
+.copy-container {
+  max-width: 680px;
+  margin: 10px;
+}
+.copy-sub-container {
+  margin-bottom: 30px;
+}
+.name-container {
+  margin-bottom: 20px;
+}
 #footer {
   height: 100px;
   width: 100%;
