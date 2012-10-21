@@ -1,6 +1,5 @@
-body {
-  color: white;
-  background-color: black;
+hr {
+  margin: 15px 0;
 }
 #footer {
   height: 100px;
