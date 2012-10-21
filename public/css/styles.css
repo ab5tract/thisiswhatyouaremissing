@@ -60,4 +60,7 @@ hr {
 }
 #nav a:hover {
   color: white;
-};
+}
+.lead {
+  font-size: 18px;
+}
