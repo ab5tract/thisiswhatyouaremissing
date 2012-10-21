@@ -38,8 +38,10 @@ end
 
 get '/fetch' do
   players = client.videos_by(params).videos.compact_map do |video|
-    @video = video
-    erb :player, :layout => false if video.restricted_in?(params[:country]) && !video.is_rental
+    if video.restricted_in?(params[:country]) && !video.is_rental
+      @video = video
+      erb :player, :layout => false
+    end
   end
 
   logger.debug "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
@@ -55,9 +57,9 @@ get '/' do
 end
 
 get '/about' do
-  erb :about, :layout => false
+  erb :about
 end
 
 get '/visa' do
-  erb :visa, :layout => false
+  erb :visa
 end
