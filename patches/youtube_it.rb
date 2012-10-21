@@ -214,6 +214,9 @@ class YouTubeIt
         media_restriction = media_group.at_xpath("media:restriction")
         restriction = media_restriction.text.split if media_restriction && media_restriction[:relationship] == 'deny'
 
+        media_price = media_group.at_xpath("media:price")
+        is_rental = !media_price.nil?
+
         YouTubeIt::Model::Video.new(
           :video_id       => video_id,
           :published_at   => published_at,
@@ -245,7 +248,8 @@ class YouTubeIt
           :insight_uri    => insight_uri,
           :unique_id      => ytid,
           :perm_private   => perm_private,
-          :restriction    => restriction)
+          :restriction    => restriction,
+          :is_rental      => is_rental)
       end
     end
   end
@@ -253,6 +257,7 @@ class YouTubeIt
   module Model
     class Video < YouTubeIt::Record
       attr_reader :restriction
+      attr_reader :is_rental
 
       def restricted_in?(country_code)
         restriction && restriction.include?(country_code)
