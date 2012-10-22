@@ -3,7 +3,7 @@ hr {
 }
 .copy-container {
   max-width: 685px;
-  margin: 10px;
+  margin: 20px;
 }
 .copy-sub-container {
   margin-bottom: 35px;
@@ -45,6 +45,9 @@ hr {
 #controls {
   float: right;
 }
+#main-button {
+  margin: 2px;
+}
 #select-container {
   float: left;
   margin: 3px;
@@ -63,4 +66,13 @@ hr {
 }
 .lead {
   font-size: 18px;
+}
+#loading {
+  height: 31px;
+  width: 31px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: -15px 0;
+  z-index: 2;
 }

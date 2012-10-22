@@ -18,10 +18,6 @@ before do
 end
 
 helpers do
-  def development?
-    ENV['RACK_ENV'] == 'development'
-  end
-
   def search_words
     File.open('./data/searchwords.txt') { |f| f.readlines.each { |l| l.chomp! } }
   end
@@ -37,7 +33,7 @@ helpers do
 end
 
 get '/fetch' do
-  players = client.videos_by(params).videos.compact_map do |video|
+  players = client.videos_by(params.merge :paid_content => false).videos.compact_map do |video|
     if video.restricted_in?(params[:country]) && !video.is_rental
       @video = video
       erb :player, :layout => false

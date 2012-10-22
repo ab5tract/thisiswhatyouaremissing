@@ -1,3 +1,5 @@
+<% content_for :title do %>this is what you are missing.<% end %>
+
 <div id="background-video-container"></div>
 
 <div id="video-container">
@@ -6,6 +8,10 @@
       <div id="<%= 4*i + j %>" class="slot"></div>
     <% end %>
   <% end %>
+</div>
+
+<div id="loading">
+	<img src="/img/loader.gif" />
 </div>
 
 <div id="footer">
@@ -78,6 +84,7 @@
   // RESULTS
   var restartFetch = function () {
     $('.slot').html('');
+    $('#loading').show();
     vacancies = initVacancies();
     fetch();
   };
@@ -98,7 +105,13 @@
           $('#' + slotId).html(video);
         }
       });
-      if (vacancies.length > 0) { fetch(); }
+
+      if (vacancies.length > 0) {
+      	fetch();
+      }
+      else {
+      	$('#loading').hide()
+      }
     });
   };
 
