@@ -30,17 +30,12 @@ helpers do
       :debug    => true
     })
   end
-
-  def default_params
-    # , :safe_search => 'none'
-    { :paid_content => false }
-  end
 end
 
 get '/fetch' do
-  puts "default_params.merge params: #{default_params.merge params}"
-  players = client.videos_by(default_params.merge params).videos.compact_map do |video|
-    if video.restricted_in?(params[:country]) && !video.is_rental
+  logger.debug "default_params.merge params: #{default_params.merge params}"
+  players = client.videos_by(params).videos.compact_map do |video|
+    if video.restricted_in?(params[:country])
       @video = video
       erb :player, :layout => false
     end
