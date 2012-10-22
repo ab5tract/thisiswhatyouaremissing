@@ -33,7 +33,7 @@ helpers do
 end
 
 get '/fetch' do
-  logger.debug "default_params.merge params: #{default_params.merge params}"
+  logger.debug "params: #{params}"
   players = client.videos_by(params).videos.compact_map do |video|
     if video.restricted_in?(params[:country])
       @video = video
