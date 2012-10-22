@@ -30,10 +30,14 @@ helpers do
       :debug    => true
     })
   end
+
+  def default_params
+    { :paid_content => false, :safe_search => 'none' }
+  end
 end
 
 get '/fetch' do
-  players = client.videos_by(params.merge :paid_content => false).videos.compact_map do |video|
+  players = client.videos_by(default_params.merge params).videos.compact_map do |video|
     if video.restricted_in?(params[:country]) && !video.is_rental
       @video = video
       erb :player, :layout => false
@@ -46,7 +50,7 @@ get '/fetch' do
 end
 
 get '/' do
-  @country      = request.location && request.location.country_code
+  @country      = (request.location && request.location.country_code) || 'NL'
   @search_words = JSON.dump search_words
 
   erb :index
