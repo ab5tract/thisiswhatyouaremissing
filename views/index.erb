@@ -100,7 +100,7 @@
     $.getJSON('/fetch', requestData, function (responseData) {
       $.each(responseData, function (idx, video) {
         if (vacancies.length > 0) {
-          var slotId = popRandom(vacancies);
+          var slotId = vacancies.shift();
 
           $('#' + slotId).html(video);
         }
