@@ -12,6 +12,10 @@ configure :development do
   require './devenv'
 end
 
+configure :production do
+  require 'newrelic_rpm'
+end
+
 before do
   logger.level     = Logger::DEBUG if development?
   YouTubeIt.logger = logger
