@@ -1,8 +1,8 @@
 <% content_for :title do %>this is what you are missing.<% end %>
 
-<div id="background-video-container"></div>
+<div id="background-video-container" style="display: none;"></div>
 
-<div id="video-container">
+<div id="video-container" style="display: none;">
   <% 4.times do |i| %>
     <% 4.times do |j| %>
       <div id="<%= 4*i + j %>" class="slot"></div>
@@ -47,16 +47,16 @@
 
   $('#main-button').click(function () {
     sessionStorage.setItem('country', $('select').val());
-    restartFetch();
+    resetPage();
   });
 
   // HELPERS
-  var randomIdx = function (int) {
+  var randomInt = function (int) {
     return Math.floor(Math.random()*int);
   };
 
   var popRandom = function (array) {
-    return array.splice(randomIdx(array.length),1);
+    return array.splice(randomInt(array.length),1);
   };
 
   var initVacancies = function () {
@@ -70,7 +70,7 @@
   var getCountry = function () {
     var country = sessionStorage.getItem('country');
 
-    return country == "" ? null : country;
+    return country == "" ? "<%= @country %>" : country;
   };
 
   // SEARCH WORDS
@@ -78,24 +78,36 @@
   var wordsLength = searchWords.length;
 
   var getRandomSearchWord = function () {
-    return searchWords[randomIdx(wordsLength)];
+    return searchWords[randomInt(wordsLength)];
   };
 
   // RESULTS
-  var restartFetch = function () {
-    $('.slot').html('');
-    $('#loading').show();
-    vacancies = initVacancies();
-    fetch();
-  };
-
   var requestData = {};
   var vacancies   = initVacancies();
 
+  var resetPage = function () {
+    if (getCountry() == 'US') {
+      vacancies = [];
+      $('#loading, #video-container, #background-video-container').hide();
+
+      alert('Restricted videos in the US are very rare. Please select another country from the dropdown.');
+
+      return;
+    }
+
+    $('.slot').html('');
+    $('#loading, #video-container, #background-video-container').show();
+
+    var shouldRestart = vacancies.length <= 0;
+    vacancies         = initVacancies();
+
+    if (shouldRestart) { fetch(); }
+  };
+
   var fetch = function () {
-    requestData['page']    = randomIdx(20) + 1;
+    requestData['page']    = randomInt(20) + 1;
     requestData['query']   = getRandomSearchWord();
-    requestData['country'] = getCountry() || "<%= @country %>";
+    requestData['country'] = getCountry();
 
     $.getJSON('/fetch', requestData, function (responseData) {
       $.each(responseData, function (idx, video) {
@@ -110,11 +122,11 @@
       	fetch();
       }
       else {
-      	$('#loading').hide()
+      	$('#loading').hide();
       }
     });
   };
 
-  fetch();
+  resetPage();
 </script>
 <% end %>
