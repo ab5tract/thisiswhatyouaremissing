@@ -48,7 +48,7 @@ get '/fetch' do
     end
   end
 
-  logger.debug "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
+  puts "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
 
   JSON.dump players
 end
