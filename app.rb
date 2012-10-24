@@ -17,7 +17,7 @@ configure :production do
 end
 
 before do
-  logger.level     = Logger::DEBUG #if development?
+  logger.level     = Logger::DEBUG if development?
   YouTubeIt.logger = logger
 end
 
@@ -25,7 +25,7 @@ helpers do
   def development?
     ENV['RACK_ENV'] == 'development'
   end
-
+  
   def search_words
     File.open('./data/searchwords.txt') { |f| f.readlines.each { |l| l.chomp! } }
   end
@@ -48,7 +48,7 @@ get '/fetch' do
     end
   end
 
-  puts "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
+  logger.debug "\nHITS: #{players.size}\nQUERY: #{params[:query]}\nPAGE: #{params[:page]}\nCOUNTRY: #{params[:country]}\n"
 
   JSON.dump players
 end
