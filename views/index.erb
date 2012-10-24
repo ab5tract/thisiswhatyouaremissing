@@ -68,7 +68,7 @@
 
   // COUNTRY
   var getCountry = function () {
-    var country = sessionStorage.getItem('country');
+    var country = sessionStorage.getItem('country') || "";
 
     return country == "" ? "<%= @country %>" : country;
   };
@@ -89,6 +89,7 @@
     if (getCountry() == 'US') {
       vacancies = [];
       $('#loading, #video-container, #background-video-container').hide();
+      $('#footer').css('top', '35px');
 
       alert('Restricted videos in the US are very rare. Please select another country from the dropdown.');
 
@@ -96,6 +97,7 @@
     }
 
     $('.slot').html('');
+    $('#footer').css('top', '1385px');
     $('#loading, #video-container, #background-video-container').show();
 
     var shouldRestart = vacancies.length <= 0;
