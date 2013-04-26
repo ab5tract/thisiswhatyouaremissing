@@ -1,5 +1,5 @@
-body {
-  background-color: black;
+body, #background-video-container {
+  background-color: rgb(15, 15, 15);
 }
 hr {
   margin: 10px 0;
@@ -7,6 +7,7 @@ hr {
 .copy-container {
   max-width: 685px;
   margin: 20px;
+  color: ghostwhite;
 }
 .copy-sub-container {
   margin-bottom: 35px;
@@ -33,7 +34,6 @@ hr {
   height: 1360px;
 }
 #background-video-container {
-  background-color: black;
   height: 1700px;
 }
 .slot {
@@ -60,7 +60,7 @@ hr {
   width: 300px;
 }
 #nav a {
-  color: gray;
+  color: gainsboro;
   text-decoration: underline;
   margin: 0px 20px;
 }
